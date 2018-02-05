@@ -24,11 +24,12 @@ def main():
     folder_1 = "D:\Khoa luan\Models\Data\VLSP2018-Train"
     folder_2 = "D:\Khoa luan\Models\Data\VLSP2018-Dev"
     train_dir = "dev_sample.txt"
-    word_list_train, pos_list_train, chunk_list_train, tag_list_train, num_sent_train, max_length_train, num_word, average_sent_length, num_org, num_loc, num_per  = \
-        utils.read_conll_format(train_dir)
-    print(num_word, num_per, num_loc, num_org)
-    loc_list, per_list, org_list = utils.getTag(word_list_train, tag_list_train)
-    # print (loc_list)
+    data = utils.read_conll_format(train_dir)
+    print(data)
+    loc_list = data['loc_list']
+    per_list = data['per_list']
+    org_list = data['org_list']
+    print (loc_list)
 
 if __name__ == '__main__':
     main()
