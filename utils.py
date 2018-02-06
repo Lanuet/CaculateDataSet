@@ -49,9 +49,9 @@ def read_conll_format(folder):
     chunk_list = []
     pos_list = []
     tag_list = []
-    loc_list = []
-    org_list = []
-    per_list = []
+    loc_list = set()
+    org_list = set()
+    per_list = set()
     len_sents = []
     num_loc = 0
     num_per = 0
@@ -72,20 +72,19 @@ def read_conll_format(folder):
                     tags.append(tag)
                     if tag.endswith("LOC"):
                         if tag == "B-LOC": num_loc += 1
-                        if word not in loc_list: loc_list.append(word)
+                        loc_list.add(word)
                     elif tag.endswith("ORG"):
                         if tag == "B-ORG": num_org += 1
-                        if word not in org_list: org_list.append(word)
+                        org_list.add(word)
                     elif tag.endswith("PER"):
                         if tag == "B-PER": num_per += 1
-                        if word not in per_list: per_list.append(word)
+                        per_list.add(word)
                 else:
                     word_list.append(words)
                     pos_list.append(poss)
                     chunk_list.append(chunks)
                     tag_list.append(tags)
-                    sent_length = len(words)
-                    len_sents.append(sent_length)
+                    len_sents.append(len(words))
                     words = []
                     chunks = []
                     poss = []
