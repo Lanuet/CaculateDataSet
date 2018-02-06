@@ -1,4 +1,6 @@
 import codecs
+import glob
+import os
 
 import numpy as np
 
@@ -41,59 +43,60 @@ def map_number_and_punct(word):
         word = u'<punct>'
     return word
 
-def read_conll_format(input_file):
-    with codecs.open(input_file, 'r', 'utf-8') as f:
-        word_list = []
-        chunk_list = []
-        pos_list = []
-        tag_list = []
-        words = []
-        chunks = []
-        poss = []
-        tags = []
-        loc_list = []
-        org_list = []
-        per_list = []
-        len_sents = []
-        num_sent = 0
-        max_length = 0
-        num_word = 0
-        num_loc = 0
-        num_per = 0
-        num_org = 0
-        for line in f:
-            line = line.strip().split()
-            if len(line) > 0:
-                word, pos, chunk, tag = line
-                word = map_number_and_punct(word.lower())
-                words.append(word)
-                poss.append(pos)
-                chunks.append(chunk)
-                tags.append(tag)
-                if tag.endswith("LOC"):
-                    if tag == "B-LOC": num_loc += 1
-                    if word not in loc_list: loc_list.append(word)
-                elif tag.endswith("ORG"):
-                    if tag == "B-ORG": num_org += 1
-                    if word not in org_list: org_list.append(word)
-                elif tag.endswith("PER"):
-                    if tag == "B-PER": num_per += 1
-                    if word not in per_list: per_list.append(word)
-            else:
-                word_list.append(words)
-                pos_list.append(poss)
-                chunk_list.append(chunks)
-                tag_list.append(tags)
-                sent_length = len(words)
-                len_sents.append(sent_length)
-                num_word += sent_length
-                words = []
-                chunks = []
-                poss = []
-                tags = []
-                num_sent += 1
-                max_length = max(max_length, sent_length)
-        average_sent_length = max(len_sents)/len(len_sents)
+def read_conll_format(folder):
+    files = glob.glob(os.path.join(folder, ".txt"))
+    word_list = []
+    chunk_list = []
+    pos_list = []
+    tag_list = []
+    loc_list = []
+    org_list = []
+    per_list = []
+    len_sents = []
+    num_sent = 0
+    num_word = 0
+    num_loc = 0
+    num_per = 0
+    num_org = 0
+    for input_file in files:
+        with codecs.open(input_file, 'r', 'utf-8') as f:
+            words = []
+            chunks = []
+            poss = []
+            tags = []
+            for line in f:
+                line = line.strip().split()
+                if len(line) > 0:
+                    word, pos, chunk, tag = line
+                    word = map_number_and_punct(word.lower())
+                    words.append(word)
+                    poss.append(pos)
+                    chunks.append(chunk)
+                    tags.append(tag)
+                    if tag.endswith("LOC"):
+                        if tag == "B-LOC": num_loc += 1
+                        if word not in loc_list: loc_list.append(word)
+                    elif tag.endswith("ORG"):
+                        if tag == "B-ORG": num_org += 1
+                        if word not in org_list: org_list.append(word)
+                    elif tag.endswith("PER"):
+                        if tag == "B-PER": num_per += 1
+                        if word not in per_list: per_list.append(word)
+                else:
+                    word_list.append(words)
+                    pos_list.append(poss)
+                    chunk_list.append(chunks)
+                    tag_list.append(tags)
+                    sent_length = len(words)
+                    len_sents.append(sent_length)
+                    num_word += sent_length
+                    words = []
+                    chunks = []
+                    poss = []
+                    tags = []
+                    num_sent += 1
+        max_length = max(len_sents)
+        average_sent_length = np.average(len_sents)
         return make_dict(word_list, pos_list, chunk_list, tag_list, num_sent, max_length, num_word, average_sent_length, num_org, num_loc, num_per, loc_list, org_list, per_list)
 
 
