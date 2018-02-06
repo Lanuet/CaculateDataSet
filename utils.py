@@ -53,8 +53,6 @@ def read_conll_format(folder):
     org_list = []
     per_list = []
     len_sents = []
-    num_sent = 0
-    num_word = 0
     num_loc = 0
     num_per = 0
     num_org = 0
@@ -88,14 +86,14 @@ def read_conll_format(folder):
                     tag_list.append(tags)
                     sent_length = len(words)
                     len_sents.append(sent_length)
-                    num_word += sent_length
                     words = []
                     chunks = []
                     poss = []
                     tags = []
-                    num_sent += 1
+        num_sent = len(len_sents)
+        num_word = sum(len_sents)
         max_length = max(len_sents)
-        average_sent_length = np.average(len_sents)
+        average_sent_length = num_word / num_sent
         return make_dict(word_list, pos_list, chunk_list, tag_list, num_sent, max_length, num_word, average_sent_length, num_org, num_loc, num_per, loc_list, org_list, per_list)
 
 
