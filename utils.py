@@ -66,7 +66,7 @@ def read_conll_format(folder):
             tags = []
             for line in f:
                 if len(line) > 0:
-                    word, pos, chunk, tag = line.strip().split("\t")
+                    word, pos, chunk, tag = line.strip().split("\t")[:4]
                     word = map_number_and_punct(word.lower())
                     words.append(word)
                     poss.append(pos)
